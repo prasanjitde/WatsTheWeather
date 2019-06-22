@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">WatsTheWeather</string>
     <string name="action_settings">Settings</string>
+
+    <string name="txt_place">Place</string>
+    <string name="txt_condition">Condition</string>
+    <string name="src_imv_condition">Condition</string>
+    <string name="txt_temp">Temperature</string>
 </resources>
