@@ -2,15 +2,17 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                    xmlns:app="http://schemas.android.com/apk/res-auto"
                                                    android:layout_width="match_parent"
-                                                   android:background="@drawable/background"
                                                    android:layout_height="match_parent">
 
-
+    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                 android:id="@+id/frameLayoutBackground">
+    </FrameLayout>
     <TextView
             android:text="@string/txt_place"
             android:layout_width="0dp"
             android:textSize="@dimen/txt_place_font"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:fontFamily="sans-serif-light"
             android:id="@+id/txtPlace" app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="16dp"
@@ -19,7 +21,7 @@
             app:layout_constraintHorizontal_bias="0.0" app:layout_constraintVertical_bias="0.0"/>
     <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" app:srcCompat="@drawable/sunny"
+            android:layout_height="wrap_content"
             android:id="@+id/imvCondition" android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="16dp" android:layout_marginBottom="16dp"
@@ -31,25 +33,42 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtCondition"
+            android:textColor="@color/white"
             android:fontFamily="sans-serif-light"
             android:textSize="@dimen/txt_condition_font"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="16dp" android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imvCondition" app:layout_constraintVertical_bias="0.007"
-            app:layout_constraintHorizontal_bias="0.498"/>
+    />
     <TextView
             android:text="@string/txt_temp"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtTemperature"
-            android:textStyle="bold"
-            android:fontFamily="serif-monospace"
-            app:layout_constraintTop_toBottomOf="@+id/txtCondition" app:layout_constraintEnd_toEndOf="parent"
+            android:textStyle="normal"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif-light"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp" android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintVertical_bias="0.967" android:layout_marginTop="16dp"
-            android:textSize="@dimen/txt_temperature_font"/>
+            android:layout_marginStart="16dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:textSize="@dimen/txt_temperature_font"
+            app:layout_constraintBaseline_toBaselineOf="@+id/txtHumidity"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/txt_humidity_font"
+            android:fontFamily="sans-serif-light"
+            android:textColor="@color/white"
+            android:drawableLeft="@mipmap/humid"
+            android:gravity="center"
+            android:id="@+id/txtHumidity"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/txtCondition" android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintVertical_bias="1.0" app:layout_constraintStart_toEndOf="@+id/txtTemperature"
+            android:layout_marginStart="16dp" app:layout_constraintHorizontal_bias="1.0"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

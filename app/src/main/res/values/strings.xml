@@ -6,4 +6,13 @@
     <string name="txt_condition">Condition</string>
     <string name="src_imv_condition">Condition</string>
     <string name="txt_temp">Temperature</string>
+    <string name="txt_humidity">Humidity</string>
+    <string name="title_activity_weather">WatsTheWeather</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Welcome User</string>
+    <string name="nav_header_desc">User</string>
+
+    <string name="menu_weather">Weather</string>
+    <string name="menu_share">Share</string>
 </resources>

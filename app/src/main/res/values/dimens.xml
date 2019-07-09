@@ -1,6 +1,13 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="txt_temperature_font">36sp</dimen>
-    <dimen name="txt_place_font">20sp</dimen>
-    <dimen name="txt_condition_font">24sp</dimen>
+    <dimen name="txt_temperature_font">48sp</dimen>
+    <dimen name="txt_place_font">28sp</dimen>
+    <dimen name="txt_condition_font">28sp</dimen>
+    <dimen name="txt_humidity_font">16sp</dimen>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
 </resources>
