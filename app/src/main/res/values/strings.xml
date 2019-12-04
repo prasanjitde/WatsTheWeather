@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">WatsTheWeather</string>
     <string name="action_settings">Settings</string>
+    <string name="action_add_city">Add City</string>
 
     <string name="txt_place">Place</string>
     <string name="txt_condition">Condition</string>
@@ -15,4 +16,10 @@
 
     <string name="menu_weather">Weather</string>
     <string name="menu_share">Share</string>
+    <string name="btn_enter_city">Get Weather</string>
+    <string name="txt_enter_city_hint">Enter city like London,UK</string>
+
+    <string name="city">Hello blank fragment</string>
+    <string name="places_list_activity">Places List</string>
+    <string name="title_activity_places_search">PlacesSearchActivity</string>
 </resources>

@@ -2,6 +2,7 @@ package com.prasanjit.watstheweather.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -20,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.*
 import com.prasanjit.watstheweather.R
+import com.prasanjit.watstheweather.service.model.WeatherInfo
 import com.prasanjit.watstheweather.utilities.Utilities
 import com.prasanjit.watstheweather.viewmodel.LocationListenerViewModel
 import com.prasanjit.watstheweather.viewmodel.WeatherViewModel
@@ -36,7 +38,7 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
         there should be only one companion object per class
      */
     companion object {
-        private val TAG: String = WeatherFragment::class.java.simpleName
+            private val TAG: String = WeatherFragment::class.java.simpleName
         fun newInstance() = WeatherFragment()
     }
 
@@ -63,8 +65,8 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
         locationListenerViewModel?.currentLocation?.observe(this, Observer {
             Log.d(TAG, "LiveData Location: Latitude " + it?.latitude + " and Longitude " + it?.longitude)
             // Toast.makeText(this, "Latitude: " + it?.latitude + " Longitude: " + it?.longitude, Toast.LENGTH_SHORT).show()
-            updateWeatherByCity("Delhi")
-            // updateWeatherByCoordinates(it?.latitude ?: 0.0, it?.longitude ?: 0.0)
+            // updateWeatherByCity("Bangalore")
+            updateWeatherByCoordinates(it?.latitude ?: 0.0, it?.longitude ?: 0.0)
 
             stopLocationUpdates()
         })
@@ -159,10 +161,6 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onResume() {
         super.onResume()
         googleApiClient?.connect()
@@ -195,7 +193,7 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
             Log.d(TAG, "Weather type " + weather?.description)
             Log.d(TAG, "Weather temperature " + it?.main?.temp)
 
-            updateWeatherOnUI(weather?.id, it?.name, weather?.description, it?.main?.temp, it?.main?.humidity)
+            updateWeatherOnUI(it)
 
             if(it == null){
                 Log.d(TAG, "It is null")
@@ -220,13 +218,17 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
             Log.d(TAG, "Weather type " + weather?.description)
             Log.d(TAG, "Weather temperature " + Utilities.convertTempToDegrees(it?.main?.temp))
 
-            updateWeatherOnUI(weather?.id, it?.name, weather?.description, it?.main?.temp, it?.main?.humidity)
+            updateWeatherOnUI(it)
+
+            if(it == null){
+                Log.d(TAG, "It is null")
+            } else weatherViewModel?.insert(it)
         })
     }
 
     // updates the UI
-    private fun updateWeatherOnUI(condition: Int?, name: String?, description: String?, temperature: Double?, humidity: Int?){
-        when(condition){
+    private fun updateWeatherOnUI(weatherInfo: WeatherInfo){
+        when(weatherInfo.id){
             in 0..300 -> imvCondition.setImageDrawable(activity?.getDrawable(R.drawable.tstorm1))
             in 301..500 -> imvCondition.setImageDrawable(activity?.getDrawable(R.drawable.light_rain))
             in 501..600 -> imvCondition.setImageDrawable(activity?.getDrawable(R.drawable.shower3))
@@ -248,10 +250,10 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
             2 -> frameLayoutBackground.setBackgroundResource(R.drawable.dark_gradient_background)
         }
 
-        txtPlace.text = name ?: "Place not available"
-        txtCondition.text = description ?: "Condition not available"
-        txtTemperature.text = Utilities.convertTempToDegrees(temperature).toString() + "\u00B0C"
-        txtHumidity.text = humidity.toString() + "%"
+        txtPlace.text = weatherInfo.name ?: "Place not available"
+        txtCondition.text = weatherInfo.weather.get(0).description
+        txtTemperature.text = Utilities.convertTempToDegrees(weatherInfo.main.temp).toString() + "\u00B0C"
+        txtHumidity.text = "${weatherInfo.main.humidity}%"
     }
 
     fun setTextAndBackgroundColorForDay(){

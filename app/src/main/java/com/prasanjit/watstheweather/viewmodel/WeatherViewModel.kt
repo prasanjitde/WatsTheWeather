@@ -21,7 +21,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         val weatherInfoDao = WeatherRoomDatabase.getDatabase(application, viewModelScope).weatherInfoDao()
-        weatherRepository = WeatherRepository(weatherInfoDao)
+        weatherRepository = WeatherRepository(weatherInfoDao, application)
     }
 
     var weatherData: LiveData<WeatherInfo>? = MutableLiveData()

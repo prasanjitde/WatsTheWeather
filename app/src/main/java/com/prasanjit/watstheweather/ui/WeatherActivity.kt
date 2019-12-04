@@ -24,14 +24,17 @@ class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
 
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
         navigationView.setNavigationItemSelectedListener(this)
-
         loadWeatherFragment()
     }
 
@@ -59,9 +62,18 @@ class WeatherActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_add_city -> {
+                openAddCityFragment()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun openAddCityFragment() {
+        supportFragmentManager.beginTransaction()
+            .addToBackStack(null)
+            .add(R.id.frameLayout, EnterCityFragment.newInstance(), "add_city_fragment").commit()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

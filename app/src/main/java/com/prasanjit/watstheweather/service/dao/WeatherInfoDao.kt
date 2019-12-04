@@ -17,6 +17,9 @@ interface WeatherInfoDao {
     @Query("SELECT * from weather_info_table where name = :name")
     fun getWeatherInfo(name: String): LiveData<WeatherInfo>
 
+    @Query("SELECT * from weather_info_table where name = :name")
+    suspend fun getWeatherForCity(name: String): WeatherInfo
+
     // suspend will do this insertion in a separate thread
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(weatherInfo: WeatherInfo): Long

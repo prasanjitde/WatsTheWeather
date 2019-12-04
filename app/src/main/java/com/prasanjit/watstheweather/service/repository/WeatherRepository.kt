@@ -1,5 +1,7 @@
 package com.prasanjit.watstheweather.service.repository
 
+import android.app.Application
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,18 +18,22 @@ import java.lang.Exception
  * Created by Prasanjit on 2019-05-18.
  * This class will be used to fetch weather data from web or Room database
  */
-class WeatherRepository(private val weatherInfoDao: WeatherInfoDao){
+class WeatherRepository(private val weatherInfoDao: WeatherInfoDao, private val application: Application){
 
     suspend fun insert(weatherInfo: WeatherInfo) {
         val rows = weatherInfoDao.insert(weatherInfo)
         Log.d(TAG, "rows inserted are $rows")
     }
 
+    suspend fun queryForWeather(city: String): WeatherInfo{
+        return weatherInfoDao.getWeatherForCity(city)
+    }
+
     companion object {
         private val TAG: String = WeatherRepository::class.java.simpleName
     }
 
-    fun getWeatherFromDB(city: String): LiveData<WeatherInfo> {
+    private fun getWeatherFromDB(city: String): LiveData<WeatherInfo> {
         return weatherInfoDao.getWeatherInfo(city)
     }
 
@@ -40,8 +46,7 @@ class WeatherRepository(private val weatherInfoDao: WeatherInfoDao){
         // val weatherModel: WeatherInfo? = weatherDataFromDB?.value
         // Log.d(TAG, " Weather from DB id: ${weatherModel?.id} name: ${weatherModel?.name}")
 
-        return weatherInfoDao.getWeatherInfo("Delhi")
-        // return getWeatherByCity(city)
+        return getWeatherByCity(city)
     }
 
     /*
