@@ -2,9 +2,9 @@ package com.prasanjit.watstheweather.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationListener
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +19,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.prasanjit.watstheweather.R
 import com.prasanjit.watstheweather.service.model.WeatherInfo
 import com.prasanjit.watstheweather.utilities.Utilities
@@ -38,7 +41,7 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
         there should be only one companion object per class
      */
     companion object {
-            private val TAG: String = WeatherFragment::class.java.simpleName
+        private val TAG: String = WeatherFragment::class.java.simpleName
         fun newInstance() = WeatherFragment()
     }
 
@@ -49,8 +52,7 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
 
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.weather_fragment, container, false)
     }
@@ -60,13 +62,17 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
 
         connectToGoogleApiClient()
 
-        locationListenerViewModel = ViewModelProviders.of(this).get(LocationListenerViewModel::class.java)
+        locationListenerViewModel =
+            ViewModelProviders.of(this).get(LocationListenerViewModel::class.java)
 
-        locationListenerViewModel?.currentLocation?.observe(this, Observer {
-            Log.d(TAG, "LiveData Location: Latitude " + it?.latitude + " and Longitude " + it?.longitude)
+        locationListenerViewModel?.currentLocation?.observe(viewLifecycleOwner, Observer {
+            Log.d(
+                TAG,
+                "LiveData Location: Latitude " + it?.latitude + " and Longitude " + it?.longitude
+            )
             // Toast.makeText(this, "Latitude: " + it?.latitude + " Longitude: " + it?.longitude, Toast.LENGTH_SHORT).show()
-            // updateWeatherByCity("Bangalore")
-            updateWeatherByCoordinates(it?.latitude ?: 0.0, it?.longitude ?: 0.0)
+            updateWeatherByCity("Bangalore")
+            //updateWeatherByCoordinates(it?.latitude ?: 0.0, it?.longitude ?: 0.0)
 
             stopLocationUpdates()
         })
@@ -78,7 +84,10 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
     override fun onConnected(p0: Bundle?) {
         if ((!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) || !hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) && Build.VERSION.SDK_INT >= 23) {
             val permissions =
-                arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
             ActivityCompat.requestPermissions(this.activity!!, permissions, 1000)
         } else {
             val location = LocationServices.getFusedLocationProviderClient(this.activity!!)
@@ -128,6 +137,18 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
         Toast.makeText(activity, "Location changed", Toast.LENGTH_SHORT).show()
     }
 
+    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onProviderEnabled(p0: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onProviderDisabled(p0: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     private fun connectToGoogleApiClient() {
         googleApiClient = GoogleApiClient.Builder(activity!!)
             .addConnectionCallbacks(this)
@@ -145,17 +166,28 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
      * check for permission
      */
     private fun hasPermission(permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(activity!!, permission) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(
+            activity!!,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             1000 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     connectToGoogleApiClient()
                 } else {
-                    Toast.makeText(activity, "Oops! Permission denied for Location", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        activity,
+                        "Oops! Permission denied for Location",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -179,13 +211,13 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
     /*
         observe for weather data
      */
-    private fun updateWeatherByCity(city: String){
+    private fun updateWeatherByCity(city: String) {
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
 
         // weatherViewModel?.updateWeather("Thane")
         weatherViewModel?.updateWeather(city)
 
-        weatherViewModel?.weatherData?.observe(this, Observer {
+        weatherViewModel?.weatherData?.observe(viewLifecycleOwner, Observer {
 
             val weather = it?.weather?.get(0)
 
@@ -195,7 +227,7 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
 
             updateWeatherOnUI(it)
 
-            if(it == null){
+            if (it == null) {
                 Log.d(TAG, "It is null")
             } else weatherViewModel?.insert(it)
         })
@@ -204,7 +236,7 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
     /*
         observe for weather data
      */
-    private fun updateWeatherByCoordinates(lat: Double, lon: Double){
+    private fun updateWeatherByCoordinates(lat: Double, lon: Double) {
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
 
         // weatherViewModel?.updateWeather("Thane")
@@ -220,15 +252,15 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
 
             updateWeatherOnUI(it)
 
-            if(it == null){
+            if (it == null) {
                 Log.d(TAG, "It is null")
             } else weatherViewModel?.insert(it)
         })
     }
 
     // updates the UI
-    private fun updateWeatherOnUI(weatherInfo: WeatherInfo){
-        when(weatherInfo.id){
+    private fun updateWeatherOnUI(weatherInfo: WeatherInfo) {
+        when (weatherInfo.weather.get(0).id) {
             in 0..300 -> imvCondition.setImageDrawable(activity?.getDrawable(R.drawable.tstorm1))
             in 301..500 -> imvCondition.setImageDrawable(activity?.getDrawable(R.drawable.light_rain))
             in 501..600 -> imvCondition.setImageDrawable(activity?.getDrawable(R.drawable.shower3))
@@ -244,20 +276,21 @@ class WeatherFragment : Fragment(), GoogleApiClient.ConnectionCallbacks,
             else -> Log.d(TAG, "Wrong condition")
         }
 
-        when(Utilities.getCurrentTime()){
+        /*when (Utilities.getCurrentTime()) {
             0 -> frameLayoutBackground.setBackgroundResource(R.drawable.blue_gradient_background)
             1 -> frameLayoutBackground.setBackgroundResource(R.drawable.orange_gradient_background)
             2 -> frameLayoutBackground.setBackgroundResource(R.drawable.dark_gradient_background)
-        }
+        }*/
 
         txtPlace.text = weatherInfo.name ?: "Place not available"
         txtCondition.text = weatherInfo.weather.get(0).description
-        txtTemperature.text = Utilities.convertTempToDegrees(weatherInfo.main.temp).toString() + "\u00B0C"
+        txtTemperature.text =
+            Utilities.convertTempToDegrees(weatherInfo.main.temp).toString() + "\u00B0C"
         txtHumidity.text = "${weatherInfo.main.humidity}%"
     }
 
-    fun setTextAndBackgroundColorForDay(){
-        frameLayoutBackground.setBackgroundResource(R.drawable.blue_gradient_background)
+    fun setTextAndBackgroundColorForDay() {
+        //frameLayoutBackground.setBackgroundResource(R.drawable.blue_gradient_background)
     }
 
 }

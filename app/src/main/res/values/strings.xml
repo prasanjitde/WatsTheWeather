@@ -22,4 +22,6 @@
     <string name="city">Hello blank fragment</string>
     <string name="places_list_activity">Places List</string>
     <string name="title_activity_places_search">PlacesSearchActivity</string>
+    <string name="current_fragment">Current</string>
+    <string name="places_fragment">Places</string>
 </resources>
